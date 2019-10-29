@@ -33,9 +33,6 @@ namespace Ambientia
         static Bitmap BigScreen = new Bitmap(2560, 1440);
         static Bitmap SmallScreen = new Bitmap(20, 12);
 
-        // Change the fps to your liking
-        static int FPS = 30;
-
         // Can't touch this
         static RGBSurface Surface;
         static List<Led> Leds;
@@ -111,7 +108,6 @@ namespace Ambientia
             {
                 SetLedColors(Leds);
                 Surface.Update();
-                Thread.Sleep(1000/FPS);
             }
         }
     }
