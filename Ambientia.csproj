@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="RGB.NET.Brushes" Version="0.1.26" />
+    <PackageReference Include="RGB.NET.Core" Version="0.1.26" />
+    <PackageReference Include="RGB.NET.Devices.Corsair" Version="0.1.26" />
+    <PackageReference Include="RGB.NET.Groups" Version="0.1.26" />
+    <PackageReference Include="RGB.NET.Resources.Corsair" Version="0.3.0.234" />
+    <PackageReference Include="System.Drawing.Common" Version="4.6.0" />
+  </ItemGroup>
+
+</Project>
