@@ -37,11 +37,16 @@ namespace Ambientia
         static RGBSurface Surface;
         static List<Led> Leds;
         static bool RunUpdateThread;
+        static Stopwatch Stopwatch;
+
+        // You might want to lower this to hard limit the FPS, but increasing it won't give you anything
+        static int FPS_LIMIT = 30;
 
         static void Main(string[] args)
         {
             Surface = RGBSurface.Instance;
-            Surface.LoadDevices(CorsairDeviceProvider.Instance, RGBDeviceType.LedStripe);
+            // If you happen to have some LED Strips in your system, you don't want to be a part of this project, you should set some device filters here
+            Surface.LoadDevices(CorsairDeviceProvider.Instance, RGBDeviceType.LedStripe); 
             Surface.AlignDevices();
 
             foreach (IRGBDevice device in Surface.GetDevices<IRGBDevice>())
@@ -53,6 +58,7 @@ namespace Ambientia
 
             Thread UpdateThread = new Thread(UpdateLeds);
             RunUpdateThread = true;
+            Stopwatch = new Stopwatch();
             UpdateThread.Start();
             Console.WriteLine("Running Ambientia. Press any key or close this window to exit.");
             Console.ReadKey();
@@ -106,10 +112,14 @@ namespace Ambientia
         {
             while (RunUpdateThread == true)
             {
+                Stopwatch.Restart();
                 SetLedColors(Leds);
                 Surface.Update();
-                
-                // Here should be some delay to not eat up the entire thread, but I don't know how to implement it correctly
+                Stopwatch.Stop();
+                if (1000 / FPS_LIMIT - Stopwatch.ElapsedMilliseconds > 0)
+                {
+                    Thread.Sleep(1000 / FPS_LIMIT - (int)Stopwatch.ElapsedMilliseconds);
+                }
             }
         }
     }
