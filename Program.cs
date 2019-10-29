@@ -42,8 +42,6 @@ namespace Ambientia
 
         static void Main(string[] args)
         {
-
-
             Surface = RGBSurface.Instance;
             Surface.LoadDevices(CorsairDeviceProvider.Instance, RGBDeviceType.LedStripe);
             Surface.AlignDevices();
