@@ -20,6 +20,7 @@ using RGB.NET.Devices.Corsair;
 using RGB.NET.Groups;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 
@@ -33,7 +34,7 @@ namespace Ambientia
         static Bitmap SmallScreen = new Bitmap(20, 12);
 
         // Change the fps to your liking
-        static int FPS = 100;
+        static int FPS = 30;
 
         // Can't touch this
         static RGBSurface Surface;
