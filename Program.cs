@@ -38,6 +38,7 @@ namespace Ambientia
         static List<Led> Leds;
         static bool RunUpdateThread;
         static Stopwatch Stopwatch;
+        static Stopwatch FpsMeter;
 
         // You might want to lower this to hard limit the FPS, but increasing it won't give you anything
         static int FPS_LIMIT = 30;
@@ -59,8 +60,9 @@ namespace Ambientia
             Thread UpdateThread = new Thread(UpdateLeds);
             RunUpdateThread = true;
             Stopwatch = new Stopwatch();
+            FpsMeter = new Stopwatch();
             UpdateThread.Start();
-            Console.WriteLine("Running Ambientia. Press any key or close this window to exit.");
+            Console.WriteLine("Running Ambientia. Press any key or close this window to exit.\n\n");
             Console.ReadKey();
             RunUpdateThread = false;
         }
@@ -110,8 +112,10 @@ namespace Ambientia
 
         static void UpdateLeds()
         {
+            int cnt = 0;
             while (RunUpdateThread == true)
             {
+                FpsMeter.Restart();
                 Stopwatch.Restart();
                 SetLedColors(Leds);
                 Surface.Update();
@@ -119,6 +123,15 @@ namespace Ambientia
                 if (1000 / FPS_LIMIT - Stopwatch.ElapsedMilliseconds > 0)
                 {
                     Thread.Sleep(1000 / FPS_LIMIT - (int)Stopwatch.ElapsedMilliseconds);
+                }
+                FpsMeter.Stop();
+                
+                if (++cnt == 10)
+                {
+                    cnt = 0;
+                    double ActualFps = 1000.0 / FpsMeter.ElapsedMilliseconds;
+                    Console.SetCursorPosition(0, Console.CursorTop - 1);
+                    Console.WriteLine("FPS limit: " + FPS_LIMIT + ", Actual FPS: " + ActualFps.ToString("n2"));
                 }
             }
         }
