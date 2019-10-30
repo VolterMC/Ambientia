@@ -37,8 +37,8 @@ namespace Ambientia
         static RGBSurface Surface;
         static List<Led> Leds;
         static bool RunUpdateThread;
-        static Stopwatch Stopwatch;
-        static Stopwatch FpsMeter;
+        static Stopwatch PotentialFpsMeter;
+        static Stopwatch ActualFpsMeter;
 
         // You might want to lower this to hard limit the FPS, but increasing it won't give you anything
         static int FPS_LIMIT = 30;
@@ -59,8 +59,8 @@ namespace Ambientia
 
             Thread UpdateThread = new Thread(UpdateLeds);
             RunUpdateThread = true;
-            Stopwatch = new Stopwatch();
-            FpsMeter = new Stopwatch();
+            PotentialFpsMeter = new Stopwatch();
+            ActualFpsMeter = new Stopwatch();
             UpdateThread.Start();
             Console.WriteLine("Running Ambientia. Press any key or close this window to exit.\n\n");
             Console.ReadKey();
@@ -115,23 +115,24 @@ namespace Ambientia
             int cnt = 0;
             while (RunUpdateThread == true)
             {
-                FpsMeter.Restart();
-                Stopwatch.Restart();
+                ActualFpsMeter.Restart();
+                PotentialFpsMeter.Restart();
                 SetLedColors(Leds);
                 Surface.Update();
-                Stopwatch.Stop();
-                if (1000 / FPS_LIMIT - Stopwatch.ElapsedMilliseconds > 0)
+                PotentialFpsMeter.Stop();
+                if (1000 / FPS_LIMIT - PotentialFpsMeter.ElapsedMilliseconds > 0)
                 {
-                    Thread.Sleep(1000 / FPS_LIMIT - (int)Stopwatch.ElapsedMilliseconds);
+                    Thread.Sleep(1000 / FPS_LIMIT - (int)PotentialFpsMeter.ElapsedMilliseconds);
                 }
-                FpsMeter.Stop();
+                ActualFpsMeter.Stop();
                 
                 if (++cnt == 10)
                 {
                     cnt = 0;
-                    double ActualFps = 1000.0 / FpsMeter.ElapsedMilliseconds;
+                    double ActualFps = 1000.0 / ActualFpsMeter.ElapsedMilliseconds;
+                    double PotentialFps = 1000.0 / PotentialFpsMeter.ElapsedMilliseconds;
                     Console.SetCursorPosition(0, Console.CursorTop - 1);
-                    Console.WriteLine("FPS limit: " + FPS_LIMIT + ", Actual FPS: " + ActualFps.ToString("n2"));
+                    Console.WriteLine("FPS limit: " + FPS_LIMIT + ", Actual FPS: " + ActualFps.ToString("n2") + ", Potential FPS: " + PotentialFps.ToString("n2"));
                 }
             }
         }
