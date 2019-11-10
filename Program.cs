@@ -47,7 +47,6 @@ namespace Ambientia
         {
             Surface = RGBSurface.Instance;
 
-            // If you happen to have some LED Strips in your system, you don't want to be a part of this project, you should set some device filters here
             Surface.LoadDevices(CorsairDeviceProvider.Instance, RGBDeviceType.LedStripe); 
             Surface.AlignDevices();
 
@@ -56,6 +55,7 @@ namespace Ambientia
             Leds = (List<Led>)stripGroup.GetLeds();
             foreach (Led led in Leds)
             {
+                // If you see that something is wrong with your setup, try changing the numbers in the strings
                 if (led.Device.DeviceInfo.DeviceName != "Corsair Led Strip"
                     && led.Device.DeviceInfo.DeviceName != "Corsair Led Strip 2"
                     && led.Device.DeviceInfo.DeviceName != "Corsair Led Strip 3"
