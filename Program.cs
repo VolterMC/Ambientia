@@ -46,17 +46,31 @@ namespace Ambientia
         static void Main(string[] args)
         {
             Surface = RGBSurface.Instance;
+
             // If you happen to have some LED Strips in your system, you don't want to be a part of this project, you should set some device filters here
             Surface.LoadDevices(CorsairDeviceProvider.Instance, RGBDeviceType.LedStripe); 
             Surface.AlignDevices();
 
-            foreach (IRGBDevice device in Surface.GetDevices<IRGBDevice>())
-            {
-                Console.WriteLine("Found " + device.DeviceInfo.DeviceName);
-            }
             ILedGroup stripGroup = new ListLedGroup(Surface.Leds);
+            List<Led> ledsToRemove = new List<Led>();
             Leds = (List<Led>)stripGroup.GetLeds();
-
+            foreach (Led led in Leds)
+            {
+                if (led.Device.DeviceInfo.DeviceName != "Corsair Led Strip"
+                    && led.Device.DeviceInfo.DeviceName != "Corsair Led Strip 2"
+                    && led.Device.DeviceInfo.DeviceName != "Corsair Led Strip 3"
+                    && led.Device.DeviceInfo.DeviceName != "Corsair Led Strip 4"
+                    // Uncomment the following lines if you have 6 strips in your design
+                    // && led.Device.DeviceInfo.DeviceName != "Corsair Led Strip 5"
+                    // && led.Device.DeviceInfo.DeviceName != "Corsair Led Strip 6"
+                    )
+                    ledsToRemove.Add(led);
+            }
+            foreach (Led led in ledsToRemove)
+            {
+                Leds.Remove(led);
+            }
+            
             Thread UpdateThread = new Thread(UpdateLeds);
             RunUpdateThread = true;
             PotentialFpsMeter = new Stopwatch();
@@ -69,7 +83,7 @@ namespace Ambientia
 
         static void SetLedColors(List<Led> Leds)
         {
-            System.Drawing.Color LedColor;
+            System.Drawing.Color LedColor = System.Drawing.Color.Black;
 
             using (Graphics g = Graphics.FromImage(BigScreen))
             {
@@ -99,11 +113,6 @@ namespace Ambientia
                 {
                     int j = i - 30;
                     LedColor = SmallScreen.GetPixel(0, j + 1);
-                }
-                else // LED Strips 5 & 6 (horizontal bottom going from right)
-                {
-                    int j = i - 40;
-                    LedColor = SmallScreen.GetPixel(j, 11);
                 }
 
                 Leds[i].Color = new RGB.NET.Core.Color(LedColor.R, LedColor.G, LedColor.B);
